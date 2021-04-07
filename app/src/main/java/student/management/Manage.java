@@ -1,5 +1,6 @@
 package student.management;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +16,7 @@ import java.util.List;
  */
 public class Manage implements StudentDao {
     private Connection con;
+    private PreparedStatement ps;
 
     /**
      * Creates a Manage object with a specified connection to PostgreSQL database.
@@ -45,9 +47,10 @@ public class Manage implements StudentDao {
      * @param student A instance of the Student class.
      */
     @Override
-    public void addStudent(Student student) {
+    public int addStudent(Student student) {
+        int success = 0;
         try {
-            PreparedStatement ps = con.prepareStatement(
+            ps = con.prepareStatement(
                     "INSERT INTO students(first_name, last_name, email, gender, age, classification) VALUES (?, ?, ?, ?, ?, ?)");
             ps.setString(1, student.getFname());
             ps.setString(2, student.getLname());
@@ -55,29 +58,36 @@ public class Manage implements StudentDao {
             ps.setString(4, student.getGender());
             ps.setInt(5, student.getAge());
             ps.setString(6, student.getClassification());
-            ps.executeUpdate();
+            success = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return success;
     }
 
+    /**
+     * This method is used to upate infor on an existing student in the database.
+     * 
+     * @param list A list of Strings.
+     */
     @Override
-    public void updateStudent(List<String> list) {
+    public int updateStudent(List<String> list) {
+        int success = 0;
         try {
-            PreparedStatement ps = con.prepareStatement(
+            ps = con.prepareStatement(
                     "UPDATE students SET first_name = ?, last_name = ?, email = ?, gender = ?, age = ?, classification = ? WHERE student_id = ?");
-                    ps.setString(1, list.get(1));
-                    ps.setString(2, list.get(2));
-                    ps.setString(3, list.get(3));
-                    ps.setString(4, list.get(4));
-                    ps.setInt(5, Integer.parseInt(list.get(5)));
-                    ps.setString(6, list.get(6));
-                    ps.setInt(7, Integer.parseInt(list.get(0)));
-                    ps.executeUpdate();
+            ps.setString(1, list.get(1));
+            ps.setString(2, list.get(2));
+            ps.setString(3, list.get(3));
+            ps.setString(4, list.get(4));
+            ps.setInt(5, Integer.parseInt(list.get(5)));
+            ps.setString(6, list.get(6));
+            ps.setInt(7, Integer.parseInt(list.get(0)));
+            success = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        return success;
     }
 
     /**
@@ -86,14 +96,17 @@ public class Manage implements StudentDao {
      * @param id A int containing the student's id.
      */
     @Override
-    public void removeStudentById(int id) {
+    public int removeStudentById(int id) {
+        int success = 0;
         try {
-            PreparedStatement ps = con.prepareStatement("DELETE FROM students WHERE student_id = ?");
+            ps = con.prepareStatement("DELETE FROM students WHERE student_id = ?");
             ps.setInt(1, id);
-            ps.executeUpdate();
+            success = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println(success);
+        return success;
     }
 
     // Displays all rows and data of the records data base.
@@ -124,7 +137,7 @@ public class Manage implements StudentDao {
     public List<Student> getAllStudents() {
         List<Student> students = new ArrayList<>();
         try {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM students");
+            ps = con.prepareStatement("SELECT * FROM students");
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -146,11 +159,12 @@ public class Manage implements StudentDao {
      *             data base.
      */
     @Override
-    public void getStudentByName(String name) {
+    public ResultSet getStudentByName(String name) {
+        ResultSet rs = null;
         try {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM students WHERE first_name = ?");
+            ps = con.prepareStatement("SELECT * FROM students WHERE first_name = ?");
             ps.setString(1, name);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
 
             while (rs.next()) {
                 System.out.println("Name: " + rs.getString(2) + rs.getString(3) + "\n");
@@ -162,12 +176,22 @@ public class Manage implements StudentDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        return rs;
     }
 
     // Exit the application
-    public void exit() {
+    public void exit() throws SQLException, IOException, InterruptedException {
         System.out.println("Exiting...");
+
+        // Stop the PostgreSQL server.
+        // ****************************************/
+        String cmd = "docker stop quizzical_chatterjee";
+        Runtime run = Runtime.getRuntime();
+        Process pr = run.exec(cmd);
+        pr.waitFor();
+        // ****************************************/
+
+        con.close(); // Close the connection to the PostgreSQL Server.
         System.exit(0);
     }
 }

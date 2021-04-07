@@ -11,7 +11,7 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class App {
-    public static void main(String[] args) throws SQLException, IOException {
+    public static void main(String[] args) throws SQLException, IOException, InterruptedException {
         Scanner input = new Scanner(System.in);
         List<String> modifyInputs = new ArrayList<>();
         List<String> addInputs = new ArrayList<>();
@@ -34,12 +34,20 @@ public class App {
         // Use to select from the menu.
         byte choice;
 
-        // Read properties fro file.
+        // Start the PostgreSQL server.
+        // ******************************************/
+        String cmd = "docker start quizzical_chatterjee";
+        Runtime run = Runtime.getRuntime();
+        Process pr = run.exec(cmd);
+        pr.waitFor();
+        // ******************************************/
+        
+        // Read properties from file.
         FileInputStream fs = new FileInputStream(
                 "/Volumes/Software/Developer/Java-Programs/Student-Data-Management/app/src/main/resources/database.properties");
         Properties properties = new Properties();
         properties.load(fs);
-        
+
         // Get connection to PostgreSQL data base.
         Connection con = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("username"),
                 properties.getProperty("password"));

@@ -1,5 +1,6 @@
 package student.management;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 /**
@@ -11,11 +12,11 @@ import java.util.List;
 public interface StudentDao {
     public List<Student> getAllStudents();//
 
-    public void addStudent(Student s);//
+    public int addStudent(Student s);//
 
-    public void getStudentByName(String name);//
+    public ResultSet getStudentByName(String name);//
 
-    public void removeStudentById(int id);//
+    public int removeStudentById(int id);//
 
-    public void updateStudent(List<String> list);
+    public int updateStudent(List<String> list);
 }
