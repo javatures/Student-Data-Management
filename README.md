@@ -15,7 +15,7 @@ A simple Java command-line interface (CLI) that allows the user to simulate the 
     - [x] I/O Stream
     - [x] Collections API (ArrayList)
 - [x] Build Tool: Gradle
-- [ ] Unit Testing: JUnit
+- [x] Unit Testing: JUnit
 - [x] Javadocs
 - [x] git & GitHub
 - [x] PostgreSQL database
