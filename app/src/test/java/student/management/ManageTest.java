@@ -22,6 +22,7 @@ class ManageTest {
     private List<Student> students = new ArrayList<>();
     private Manage record = null;
     private Connection con = null;
+    private int id;
 
     @BeforeAll
     void createConnection() throws IOException, SQLException, InterruptedException {
@@ -89,6 +90,8 @@ class ManageTest {
 
     @Test
     void getStudentByNameTest() {
+        id = students.get(1).getId();
+        System.out.println(id);
         boolean exist = false;
         for (Student student : students) {
             if (student.getFname().equals("Daniel")) {
@@ -101,7 +104,7 @@ class ManageTest {
 
     @Test
     void removeStudentByIdTest() {
-        assertEquals(0, record.removeStudentById(2)); // Check if student successfully removed from the database.
+        assertEquals(0, record.removeStudentById(id)); // Check if student successfully removed from the database.
     }
 
     @Test

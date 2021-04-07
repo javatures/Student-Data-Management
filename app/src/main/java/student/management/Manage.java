@@ -167,8 +167,7 @@ public class Manage implements StudentDao {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                System.out.println("Name: " + rs.getString(2) + rs.getString(3) + "\n");
-                System.out.println("Last Name: " + rs.getString(3));
+                System.out.println("Name: " + rs.getString(2) + " " + rs.getString(3));
                 System.out.println("Email: " + rs.getString(4));
                 System.out.println("Gender: " + rs.getString(5));
                 System.out.println("Age: " + rs.getInt(6) + "\n");
